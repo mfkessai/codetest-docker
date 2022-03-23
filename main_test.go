@@ -15,7 +15,7 @@ import (
 
 const (
 	baseURL     = "http://localhost:8888" // テスト対象サーバー
-	amountLimit = 1000                    // 1日あたりの登録可能な取引金額上限
+	amountLimit = 1000                    // 登録可能な取引金額上限
 )
 
 type Transaction struct {
