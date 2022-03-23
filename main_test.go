@@ -36,15 +36,15 @@ func TestCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	const uID = 1 // テスト対象のユーザーID
-
 	// 並列で取引登録リクエストをPOSTする
 	var wg sync.WaitGroup
 	for i := 0; i < 4; i++ {
+		i := i
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			for j := 0; j < 3; j++ {
+			for j := 0; j < 6; j++ {
+				uID := (i+j)%2 + 1 // テスト対象のユーザーID。1か2のいずれか。
 				req, err := request(uID)
 				if err != nil {
 					t.Error(err)
@@ -78,15 +78,16 @@ func TestCreate(t *testing.T) {
 	wg.Wait()
 
 	// 1日あたりの登録可能な取引金額上限を超えて登録されていないかをテスト
-	var amount int
-	if err := conn.QueryRow(
-		"select sum(amount) from transactions where user_id=?",
-		uID,
-	).Scan(&amount); err != nil {
-		t.Fatal(err)
-	}
-	if amount > amountLimit {
-		t.Errorf("amount %d over the amountLimit %d", amount, amountLimit)
+	for _, uID := range []int{1, 2} {
+		var amount int
+		if err := conn.QueryRow("select sum(amount) from transactions where user_id=?", uID).
+			Scan(&amount); err != nil {
+			t.Fatal(err)
+		}
+		t.Log(uID, amount)
+		if amount > amountLimit {
+			t.Errorf("user:%d amount %d over the amountLimit %d", uID, amount, amountLimit)
+		}
 	}
 }
 
