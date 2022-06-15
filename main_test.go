@@ -76,7 +76,7 @@ func TestCreate(t *testing.T) {
 	}
 	wg.Wait()
 
-	// 1日あたりの登録可能な取引金額上限を超えて登録されていないかをテスト
+	// 1ユーザあたりの登録可能な取引金額上限を超えて登録されていないかをテスト
 	for _, uID := range []int{1, 2} {
 		var amount int
 		if err := conn.QueryRow("select sum(amount) from transactions where user_id=?", uID).
