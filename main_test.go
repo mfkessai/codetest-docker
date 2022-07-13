@@ -78,14 +78,14 @@ func TestCreate(t *testing.T) {
 
 	// 1ユーザあたりの登録可能な取引金額上限を超えて登録されていないかをテスト
 	for _, uID := range []int{1, 2} {
-		var amount int
+		var got int
 		if err := conn.QueryRow("select sum(amount) from transactions where user_id=?", uID).
-			Scan(&amount); err != nil {
+			Scan(&got); err != nil {
 			t.Fatal(err)
 		}
-		t.Log(uID, amount)
-		if amount > amountLimit {
-			t.Errorf("user:%d amount %d over the amountLimit %d", uID, amount, amountLimit)
+		want := amountLimit
+		if got != want {
+			t.Errorf("sum(amount) of user:%d = %d, want %d", uID, got, want)
 		}
 	}
 }
