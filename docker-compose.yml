@@ -3,6 +3,7 @@ version: "3.8"
 services:
   db:
     image: mysql:5.7
+    platform: linux/x86_64
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     volumes:
