@@ -1,4 +1,9 @@
 FROM golang:1.18
 
-COPY main.go .
+ENV GOPATH=
+
+COPY go.mod go.sum ./
+CMD go mod tidy
+
+COPY ./app/main.go .
 CMD go run main.go
