@@ -12,6 +12,7 @@ services:
 
   app:
     build:
-      context: app
+      context: .
+      dockerfile: app/Dockerfile
     ports:
       - 8888:8888

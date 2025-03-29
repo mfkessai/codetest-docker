@@ -1,4 +1,10 @@
 FROM golang:1.23
 
-COPY main.go .
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY ./app .
+
 CMD go run main.go
