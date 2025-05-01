@@ -44,6 +44,9 @@ func TestCreate(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	if _, err := conn.Exec("delete from codetest.transactions"); err != nil {
+		t.Fatal(err)
+	}
 
 	// 並列で取引登録リクエストをPOSTする
 	var wg sync.WaitGroup
