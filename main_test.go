@@ -3,10 +3,12 @@ package main_test
 import (
 	"bytes"
 	"database/sql"
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 	"testing"
 
@@ -24,6 +26,9 @@ type Transaction struct {
 	Description string `json:"description"`
 }
 
+//go:embed db/init.sql
+var initSQL string
+
 // TestCreate 取引登録処理が仕様を満たしているかテストする。
 func TestCreate(t *testing.T) {
 	conn, err := sql.Open("mysql", "root@tcp(127.0.0.1)/codetest")
@@ -31,7 +36,15 @@ func TestCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 	// クリーンアップ
-	if _, err := conn.Exec("delete from transactions"); err != nil {
+	for _, q := range strings.Split(initSQL, ";") {
+		if q == "" {
+			continue
+		}
+		if _, err := conn.Exec(q); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := conn.Exec("delete from codetest.transactions"); err != nil {
 		t.Fatal(err)
 	}
 
@@ -79,7 +92,7 @@ func TestCreate(t *testing.T) {
 	// 1ユーザあたりの登録可能な取引金額上限を超えて登録されていないかをテスト
 	for _, uID := range []int{1, 2} {
 		var got int
-		if err := conn.QueryRow("select sum(amount) from transactions where user_id=?", uID).
+		if err := conn.QueryRow("select sum(amount) from codetest.transactions where user_id=?", uID).
 			Scan(&got); err != nil {
 			t.Fatal(err)
 		}

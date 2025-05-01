@@ -1,9 +1,8 @@
+drop database if exists codetest;
 create database if not exists codetest character set utf8mb4 collate utf8mb4_bin;
 
-use codetest;
-
-drop table if exists users;
-create table if not exists users
+drop table if exists codetest.users;
+create table if not exists codetest.users
 (
   id      int unsigned not null primary key auto_increment,
   name    varchar(128) not null,
@@ -11,8 +10,8 @@ create table if not exists users
   unique uniq_api_key (api_key)
 ) character set utf8mb4 collate utf8mb4_bin;
 
-drop table if exists transactions;
-create table if not exists transactions
+drop table if exists codetest.transactions;
+create table if not exists codetest.transactions
 (
   id          int unsigned not null primary key auto_increment,
   user_id     int unsigned not null,
@@ -21,7 +20,7 @@ create table if not exists transactions
   CONSTRAINT fk_transactions_users FOREIGN KEY (user_id) REFERENCES users (id)
 ) character set utf8mb4 collate utf8mb4_bin;
 
-insert into users (name, api_key)
+insert into codetest.users (name, api_key)
 values ('test-user-1', 'secure-api-key-1'),
        ('test-user-2', 'secure-api-key-2'),
        ('test-user-3', 'secure-api-key-3'),
