@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	baseURL     = "http://localhost:8888" // テスト対象サーバー
-	amountLimit = 1000                    // 登録可能な取引金額上限
+	baseURL     = "http://localhost:8888" // Test server URL
+	amountLimit = 1000                    // Maximum total transaction amount per user
 )
 
 type Transaction struct {
@@ -29,13 +29,13 @@ type Transaction struct {
 //go:embed db/init.sql
 var initSQL string
 
-// TestCreate 取引登録処理が仕様を満たしているかテストする。
+// TestCreate Test whether the transaction registration implementation passes the test.
 func TestCreate(t *testing.T) {
 	conn, err := sql.Open("mysql", "root@tcp(127.0.0.1)/codetest")
 	if err != nil {
 		t.Fatal(err)
 	}
-	// クリーンアップ
+	// Cleanup
 	for _, q := range strings.Split(initSQL, ";") {
 		if q == "" {
 			continue
@@ -48,7 +48,7 @@ func TestCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// 並列で取引登録リクエストをPOSTする
+	// POST transaction registration requests in parallel
 	var wg sync.WaitGroup
 	for i := 0; i < 4; i++ {
 		i := i
@@ -56,7 +56,7 @@ func TestCreate(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 6; j++ {
-				uID := (i+j)%2 + 1 // テスト対象のユーザーID。1か2のいずれか。
+				uID := (i+j)%2 + 1 // User ID to be tested. Either 1 or 2.
 				req, err := request(uID)
 				if err != nil {
 					t.Error(err)
@@ -68,7 +68,7 @@ func TestCreate(t *testing.T) {
 					return
 				}
 
-				// 想定外のレスポンスステータスが返ってきていないかをテスト
+				// Test whether an unexpected response status was returned
 				if resp.StatusCode != http.StatusPaymentRequired && resp.StatusCode != http.StatusCreated {
 					t.Errorf("POST /transactions status %d", resp.StatusCode)
 				}
@@ -89,7 +89,7 @@ func TestCreate(t *testing.T) {
 	}
 	wg.Wait()
 
-	// 1ユーザあたりの登録可能な取引金額上限を超えて登録されていないかをテスト
+	// Check if there is a user that has an amount greater than the per-user limit registered
 	for _, uID := range []int{1, 2} {
 		var got int
 		if err := conn.QueryRow("select sum(amount) from codetest.transactions where user_id=?", uID).
