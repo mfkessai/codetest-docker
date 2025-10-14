@@ -1,39 +1,40 @@
 # codetest
 
-## 課題
 
-テストがパスするようにアプリケーションを実装してください。
+## Task
 
-アプリケーションはDocker Compose上のコンテナとして実行されるように構成してください。
+Implement the application such that the tests pass.
 
-テストはGoにより実装されており、以下のコマンドで実行が可能です。
+It should be implemented so that it runs when Docker Compose is executed.
+
+Tests are implemented in Go and can be run with this command:
 
 ```
 go test
 ```
 
-テストコード(main_test.go)を変更する以外はどのような手段を使っても構いません。制限時間もありません。
+You are free to use any method you want, as long as you do not edit the test code (main_test.go). Please discuss the submission deadline with your recruiter.
 
-サンプルとしてmain.goを配置していますが、使用言語の制約も無いため、Go以外の言語で実装しても構いません。
+We have put a main.go file in place as a sample, but you may use any language you want.
 
-## プロジェクト概要
+## Project outline
 
-ユーザーごとに「取引(Transaction)」（金額と商品説明からなる情報）を登録することができるサービスです。
+Create a service that allows the registration of "transactions", consisting of an amount of money and a product description each.
 
-ユーザーごとに登録可能な取引の金額累計に上限(1000)があり、それを超えて登録しようとすると特定のレスポンスステータスを返してエラーになる仕様です。
+There is a per-user limit of 1000 for the total transaction amount that may be registered. If registering a specific transaction would surpass the limit for that user, a certain response status (HTTP 402: payment required) should be returned, resulting in an error.
 
-RDBMSとしてMySQLを使う想定でdbディレクトリ以下にスキーマを置いています。
+A database scheme has been placed in the db directory, under the assumption that MySQL will be used as the RDBMS. 
 
-## 開発
+## Development
 
-`docker compose up`でダミーのアプリケーションコンテナとスキーマが反映されたMySQLを起動できます。
+You can start a dummy application container and a MySQL DB using the schema definition by running `docker compose up`.
 
-## 評価
+## Evaluation
 
-評価観点の9割はテストがパスしているかどうかになります。
+90% of the evaluation depends on whether the tests pass.
 
-その他についてどのように工夫していただいても構いませんが、評価には影響しないため、必要十分な実装を目指すことを推奨しています。
+Other than that, you may implement other improvements if you wish, but as these will not affect the evaluation, we recommend focusing on an implementation that passes the tests first.
 
-## 提出方法
+## Submission method
 
-課題に対する実装を含んだ状態でリポジトリ全体をZIP形式でまとめ、所定のアップロードフォームでアップロードしてください。
+Please compress the repository, including your implemented solution, into a ZIP file and submit it via the upload form.
